@@ -1,7 +1,8 @@
 import urllib, os.path, string
+from urlparse import urlparse
 import requests
 from bs4 import BeautifulSoup
-from urlparse import urlparse
+
 
 """
 todo:
@@ -60,15 +61,16 @@ def retrieve(url, file_prefix='', target_dir=''):
 
         # An absolute path relative to the domain
         elif favicon_url.startswith('/'):
-            favicon_url = parsed_site_uri.scheme + '://' + 
-            parsed_site_uri.netloc + favicon_url
+            favicon_url = parsed_site_uri.scheme + '://' + \
+                parsed_site_uri.netloc + favicon_url
         
         # A relative path favicon    
         elif not favicon_url.startswith('http'):
             path, filename  = os.path.split(parsed_site_uri.path)
-            favicon_url = parsed_site_uri.scheme + '://' +
+            favicon_url = parsed_site_uri.scheme + '://' + \
                 parsed_site_uri.netloc + '/' + os.path.join(path, favicon_url)
         
+        # We finally have a URL for our favicon. Get it. 
         response = requests.get(favicon_url)
         if response.status_code == requests.codes.ok:
             # we want to get the the filename from the url without any params
@@ -78,7 +80,9 @@ def retrieve(url, file_prefix='', target_dir=''):
             
             local_filename = os.path.join(target_dir, file_prefix + 
                 favicon_filename)
+                
             return _save_file(local_filename, response)
+            
     else:
         # The favicon doesn't appear to be in the makrup
         # Let's look at the common locaiton, url/favicon.ico
@@ -90,6 +94,7 @@ def retrieve(url, file_prefix='', target_dir=''):
         if response.status_code == requests.codes.ok:
             local_filename = os.path.join(target_dir, file_prefix + 
                 'favicon.ico')
+                
             return _save_file(local_filename, response)
 
     
