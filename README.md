@@ -20,7 +20,8 @@ download_favicon('https://www.python.org/')
 If you want to be specific in where that favicon gets written to disk,
 
 ````
-favicon_saved_at = download_favicon('https://www.python.org/', file_prefix='python-', '/tmp/favicon-downloads')
+favicon_saved_at = download_favicon('https://www.python.org/', \
+	file_prefix='python-', '/tmp/favicon-downloads')
 ````
 
 ###Get just get the location
