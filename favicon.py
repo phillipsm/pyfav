@@ -15,7 +15,7 @@ figure out how to integrate with readthedocs
 """
 
 
-def retrieve(url, file_prefix='', target_dir=''):
+def retrieve(url, file_prefix='/tmp', target_dir=''):
     """
     Get a favicon given a URL. Retrurn None if unable to find the file.
     If the file is found, retrun it.
