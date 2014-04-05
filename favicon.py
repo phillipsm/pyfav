@@ -15,7 +15,7 @@ figure out how to integrate with readthedocs
 """
 
 
-def retrieve(url, file_prefix='/tmp', target_dir=''):
+def retrieve(url, file_prefix='', target_dir=''):
     """
     Get a favicon given a URL. Retrurn None if unable to find the file.
     If the file is found, retrun it.
@@ -24,11 +24,16 @@ def retrieve(url, file_prefix='/tmp', target_dir=''):
     we check URL/facicon.ico.
     """
 
-    parsed_uri = urlparse(url)
+    parsed_site_uri = urlparse(url)
+    
 
     # Help the user out if they didn't give us a protocol
-    if not parsed_uri.scheme:
+    if not parsed_site_uri.scheme:
         url = 'http://' + url
+        parsed_site_uri = urlparse(url)
+
+    if not parsed_site_uri.scheme or not parsed_site_uri.netloc:
+        raise Exception("Unable to parse URL, %s" % url)
     
     # Get the markup
     try:
@@ -52,6 +57,17 @@ def retrieve(url, file_prefix='/tmp', target_dir=''):
         if favicon_url.startswith('//'):
             parsed_uri = urlparse(url)
             favicon_url = parsed_uri.scheme + ':' + favicon_url
+
+        # An absolute path relative to the domain
+        elif favicon_url.startswith('/'):
+            favicon_url = parsed_site_uri.scheme + '://' + 
+            parsed_site_uri.netloc + favicon_url
+        
+        # A relative path favicon    
+        elif not favicon_url.startswith('http'):
+            path, filename  = os.path.split(parsed_site_uri.path)
+            favicon_url = parsed_site_uri.scheme + '://' +
+                parsed_site_uri.netloc + '/' + os.path.join(path, favicon_url)
         
         response = requests.get(favicon_url)
         if response.status_code == requests.codes.ok:
