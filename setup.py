@@ -28,6 +28,7 @@ setup(
     packages = find_packages(),
     install_requires = install_requires,
     description = 'Find and save a favicon given a URL',
+    long_description=open('README.md').read(),
     classifiers = filter(None, classifiers.split('\n')),
     test_suite = 'test',
 )
