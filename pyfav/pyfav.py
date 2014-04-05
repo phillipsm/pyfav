@@ -22,7 +22,7 @@ from favicon import download_favicon
 download_favicon('https://www.python.org/')
 ============
 
-if you want to be specific in where that favicon gets written to disk,
+If you want to be specific in where that favicon gets written to disk,
 
 ============
 favicon_saved_at = download_favicon('https://www.python.org/', \
@@ -30,19 +30,63 @@ favicon_saved_at = download_favicon('https://www.python.org/', \
 ============
 
 
-if you'd prefer to handle the write to disk piece, use the get_favicon_url
+If you'd prefer to handle the write to disk piece, use the get_favicon_url
 function by itself,
 ============
 favicon_url = get_favicon_url('https://www.python.org/')
 ============
-
-
-todo:
-
-add test cases to suite
-package up with distutils
-
 """
+
+
+def download_favicon(url, file_prefix='', target_dir='/tmp'):
+    """
+    Given a URL download the save it to disk
+    
+    Keyword arguments:
+    url -- A string. This is the location of the favicon
+    file_prefix - A string. If you want the downloaded favicon filename to
+        be start with some characters you provide, this is a good way to do it.
+    target_dir -- The location where the favicon will be saved.
+    
+    Returns:
+    The file location of the downloaded favicon. A string.
+    """
+    
+    parsed_site_uri = urlparse(url)
+
+    # Help the user out if they didn't give us a protocol
+    if not parsed_site_uri.scheme:
+        url = 'http://' + url
+        parsed_site_uri = urlparse(url)
+
+    if not parsed_site_uri.scheme or not parsed_site_uri.netloc:
+        raise Exception("Unable to parse URL, %s" % url)
+
+    url = get_favicon_url(url)
+
+    # We finally have a URL for our favicon. Get it. 
+    response = requests.get(url)
+    if response.status_code == requests.codes.ok:
+        # we want to get the the filename from the url without any params
+        parsed_uri = urlparse(url)
+        favicon_filepath = parsed_uri.path
+        favicon_path, favicon_filename  = os.path.split(favicon_filepath)
+
+    valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
+    
+    sanitized_filename = "".join([x if valid_chars \
+        else "" for x in favicon_filename])
+        
+    sanitized_filename = os.path.join(target_dir, file_prefix + 
+        sanitized_filename)
+        
+    with open(sanitized_filename, 'wb') as f:
+            for chunk in response.iter_content(chunk_size=1024): 
+                if chunk: # filter out keep-alive new chunks
+                    f.write(chunk)
+                    f.flush()
+                    
+    return sanitized_filename
 
 
 def parse_markup_for_favicon(markup, url):
@@ -136,56 +180,3 @@ def get_favicon_url(url):
 
     # No favicon in the markup or at url/favicon.ico
     return None
-
-
-def download_favicon(url, file_prefix='', target_dir='/tmp'):
-    """
-    Given a URL download the save it to disk
-    
-    Keyword arguments:
-    url -- A string. This is the location of the favicon
-    file_prefix - A string. If you want the downloaded favicon filename to
-        be start with some characters you provide, this is a good way to do it.
-    target_dir -- The location where the favicon will be saved.
-    
-    Returns:
-    The file location of the downloaded favicon. A string.
-    """
-    
-    parsed_site_uri = urlparse(url)
-
-    # Help the user out if they didn't give us a protocol
-    if not parsed_site_uri.scheme:
-        url = 'http://' + url
-        parsed_site_uri = urlparse(url)
-
-    if not parsed_site_uri.scheme or not parsed_site_uri.netloc:
-        raise Exception("Unable to parse URL, %s" % url)
-
-
-    url = get_favicon_url(url)
-
-
-    # We finally have a URL for our favicon. Get it. 
-    response = requests.get(url)
-    if response.status_code == requests.codes.ok:
-        # we want to get the the filename from the url without any params
-        parsed_uri = urlparse(url)
-        favicon_filepath = parsed_uri.path
-        favicon_path, favicon_filename  = os.path.split(favicon_filepath)
-
-    valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
-    
-    sanitized_filename = "".join([x if valid_chars \
-        else "" for x in favicon_filename])
-        
-    sanitized_filename = os.path.join(target_dir, file_prefix + 
-        sanitized_filename)
-        
-    with open(sanitized_filename, 'wb') as f:
-            for chunk in response.iter_content(chunk_size=1024): 
-                if chunk: # filter out keep-alive new chunks
-                    f.write(chunk)
-                    f.flush()
-                    
-    return sanitized_filename
