@@ -1,7 +1,19 @@
-import urllib, os.path
+import urllib, os.path, string
 import requests
 from bs4 import BeautifulSoup
 from urlparse import urlparse
+
+"""
+todo:
+
+rename retrieve function
+add pep 8 styling for funcation parms
+add test suite
+package up with distutils
+figure out how to integrate with readthedocs
+
+"""
+
 
 def retrieve(url, file_prefix='', target_dir=''):
     """
@@ -12,18 +24,23 @@ def retrieve(url, file_prefix='', target_dir=''):
     we check URL/facicon.ico.
     """
 
+    parsed_uri = urlparse(url)
+
     # Help the user out if they didn't give us a protocol
-    if not url.startswith('http'):
+    if not parsed_uri.scheme:
         url = 'http://' + url
     
     # Get the markup
-    response = requests.get(url)
+    try:
+        response = requests.get(url)
+    except:
+        raise Exception("Unable to find URL. Is it valid? %s" % url)
     
     if response.status_code == requests.codes.ok:
         soup = BeautifulSoup(response.content)
     else:
-        pass
-        # throw some exception here
+        raise Exception("The URL doesn't seem reachable or is retruning " \
+            "a discouraging HTTP status code %s" % url)
         
     # Do we have a link element with the icon?
     icon_link = soup.find('link', rel='icon')
@@ -43,7 +60,8 @@ def retrieve(url, file_prefix='', target_dir=''):
             favicon_filepath = parsed_uri.path
             favicon_path, favicon_filename  = os.path.split(favicon_filepath)
             
-            local_filename = os.path.join(target_dir, file_prefix + favicon_filename)
+            local_filename = os.path.join(target_dir, file_prefix + 
+                favicon_filename)
             return _save_file(local_filename, response)
     else:
         # The favicon doesn't appear to be in the makrup
@@ -54,7 +72,7 @@ def retrieve(url, file_prefix='', target_dir=''):
                             
         response = requests.get(favicon_location)
         if response.status_code == requests.codes.ok:
-            local_filename = os.path.join(local_filename_prefix, file_prefix + 
+            local_filename = os.path.join(target_dir, file_prefix + 
                 'favicon.ico')
             return _save_file(local_filename, response)
 
@@ -65,11 +83,19 @@ def _save_file(local_filename, response):
     A simple helper to save the favicon to disk
     """
     
-    sanitized_filename = "".join([x if x.isalnum() else "" for x in local_filename]) 
+    path, filename  = os.path.split(local_filename)
+    
+    valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
+    
+    sanitized_filename = "".join([x if valid_chars \
+        else "" for x in filename])
+        
+    sanitized_filename = os.path.join(path, sanitized_filename)
+        
     with open(sanitized_filename, 'wb') as f:
             for chunk in response.iter_content(chunk_size=1024): 
                 if chunk: # filter out keep-alive new chunks
                     f.write(chunk)
                     f.flush()
                     
-    return local_filename
+    return sanitized_filename
