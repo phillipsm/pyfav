@@ -26,7 +26,7 @@ If you want to be specific in where that favicon gets written to disk,
 
 ============
 favicon_saved_at = download_favicon('https://www.python.org/', \
-    file_prefix='python-', '/tmp/favicon-downloads')
+    file_prefix='python-', target_dir='/tmp/favicon-downloads')
 ============
 
 
