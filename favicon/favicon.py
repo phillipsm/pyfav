@@ -25,8 +25,7 @@ def retrieve(url, file_prefix='', target_dir=''):
     we check URL/facicon.ico.
     """
 
-    parsed_site_uri = urlparse(url)
-    
+    parsed_site_uri = urlparse(url)    
 
     # Help the user out if they didn't give us a protocol
     if not parsed_site_uri.scheme:
@@ -98,7 +97,10 @@ def retrieve(url, file_prefix='', target_dir=''):
             return _save_file(local_filename, response)
 
     
-    
+
+# put link icon parsing in a function
+# update save file so that it receives a url and not a response
+
 def _save_file(local_filename, response):
     """
     A simple helper to save the favicon to disk
