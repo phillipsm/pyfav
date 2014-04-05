@@ -18,8 +18,6 @@ Topic :: Internet :: WWW/HTTP
 Topic :: Internet :: WWW/HTTP :: Site Management :: Link Checking
 """
 
-import pyfav
-
 setup( 
     name = 'pyfav',
     version = version,
