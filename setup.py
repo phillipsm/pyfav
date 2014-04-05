@@ -27,7 +27,7 @@ setup(
     license = 'http://opensource.org/licenses/MIT',
     packages = find_packages(),
     install_requires = install_requires,
-    description = 'Find and save a favicon given a URL',
+    description = 'You supply the URL, pyfav will supply the URL\'s favicon',
     long_description=open('README.md').read(),
     classifiers = filter(None, classifiers.split('\n')),
     test_suite = 'test',
