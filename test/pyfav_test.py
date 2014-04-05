@@ -1,15 +1,15 @@
 import unittest
 
-from favicon import retrieve
+from pyfav import retrieve
 
-class FaviconTest(unittest.TestCase):
+class PyFavTest(unittest.TestCase):
         
     def test_reteieve(self):
         retrieve('bing.com')
         self.assertEqual(1, 1)
 
 def suite():
-    test_suite = unittest.makeSuite(FaviconTest, 'test')
+    test_suite = unittest.makeSuite(PyFavTest, 'test')
     return test_suite
 
 if __name__ == '__main__':

@@ -1,5 +1,5 @@
-import favicon
-version = favicon.__version__
+import pyfav
+version = pyfav.__version__
 
 from setuptools import setup, find_packages
 
@@ -18,12 +18,12 @@ Topic :: Internet :: WWW/HTTP
 Topic :: Internet :: WWW/HTTP :: Site Management :: Link Checking
 """
 
-import favicon
+import pyfav
 
 setup( 
-    name = 'favicon',
+    name = 'pyfav',
     version = version,
-    url = 'http://github.com/phillipsm/favicon',
+    url = 'http://github.com/phillipsm/pyfav',
     author = 'Matthew Phillips',
     author_email = 'matt@mattphillips.info',
     license = 'http://opensource.org/licenses/MIT',
