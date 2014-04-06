@@ -5,6 +5,8 @@ pyfav is a simple Python library that helps you get a [favicon](http://en.wikipe
 
 Favicons can be annoying to track down because they're commonly located in a handful of different places. pyfav removes the annoyance by handling the details for you -- you supply a URL and pyfav will give you the favicon.
 
+[![Build Status](https://travis-ci.org/phillipsm/pyfav.svg?branch=master)](https://travis-ci.org/phillipsm/pyfav)
+
 
 ###Exchange a URL for a favicon on disk
 
