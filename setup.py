@@ -30,5 +30,6 @@ setup(
     description = 'You supply the URL, pyfav will supply the URL\'s favicon',
     long_description=open('README.md').read(),
     classifiers = filter(None, classifiers.split('\n')),
+    keywords = ['favicon', 'favicons'],
     test_suite = 'test',
 )
