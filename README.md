@@ -11,7 +11,7 @@ Favicons can be annoying to track down because they're commonly located in a han
 The simplest way to get started is to use the download_favicon function,
 
 ````
-from favicon import download_favicon
+from pyfav import download_favicon
 
 favicon_saved_at = download_favicon('https://www.python.org/')
 ````
@@ -28,6 +28,8 @@ favicon_saved_at = download_favicon('https://www.python.org/', \
 
 If you'd prefer to handle the writing piece, use the get_favicon_url function,
 ````
+from pyfav import get_favicon_url
+
 favicon_url = get_favicon_url('https://www.python.org/')
 ````
 

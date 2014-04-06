@@ -1,3 +1,4 @@
 *.pyc
 pyfav.egg-info
 dist
+build

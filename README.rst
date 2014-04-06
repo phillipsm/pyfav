@@ -17,7 +17,7 @@ function,
 
 ::
 
-    from favicon import download_favicon
+    from pyfav import download_favicon
 
     favicon_saved_at = download_favicon('https://www.python.org/')
 
@@ -36,6 +36,8 @@ If you’d prefer to handle the writing piece, use the get\_favicon\_url
 function,
 
 ::
+
+    from pyfav import download_favicon
 
     favicon_url = get_favicon_url('https://www.python.org/')
 
