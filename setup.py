@@ -1,6 +1,3 @@
-import pyfav
-version = pyfav.__version__
-
 from setuptools import setup, find_packages
 
 install_requires = [
@@ -27,7 +24,7 @@ long_description = "pyfav is a simple Python library that helps you get a \
 
 setup( 
     name = 'pyfav',
-    version = version,
+    version = '0.1',
     url = 'http://github.com/phillipsm/pyfav',
     author = 'Matthew Phillips',
     author_email = 'matt@mattphillips.info',
