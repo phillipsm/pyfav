@@ -1,9 +1,3 @@
-import urllib, os.path, string
-from urlparse import urlparse
-import requests
-from bs4 import BeautifulSoup
-
-
 """
 This is PyFav. It's a python package that helps you download favicons.
 
@@ -26,7 +20,7 @@ If you want to be specific in where that favicon gets written to disk,
 
 ============
 favicon_saved_at = download_favicon('https://www.python.org/', \
-    file_prefix='python-', target_dir='/tmp/favicon-downloads')
+    file_prefix='python.org-', target_dir='/tmp/favicon-downloads')
 ============
 
 
@@ -37,6 +31,20 @@ favicon_url = get_favicon_url('https://www.python.org/')
 ============
 """
 
+
+
+import urllib, os.path, string
+from urlparse import urlparse
+import requests
+from bs4 import BeautifulSoup
+
+
+# Some hosts don't like the requests default UA. Use this one instead.
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) \
+        AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 \
+        Safari/537.36'
+}
 
 def download_favicon(url, file_prefix='', target_dir='/tmp'):
     """
@@ -62,13 +70,16 @@ def download_favicon(url, file_prefix='', target_dir='/tmp'):
     if not parsed_site_uri.scheme or not parsed_site_uri.netloc:
         raise Exception("Unable to parse URL, %s" % url)
 
-    url = get_favicon_url(url)
+    favicon_url = get_favicon_url(url)
+
+    if not favicon_url:
+        raise Exception("Unable to find favicon for, %s" % url)
 
     # We finally have a URL for our favicon. Get it. 
-    response = requests.get(url)
+    response = requests.get(favicon_url, headers=headers)
     if response.status_code == requests.codes.ok:
         # we want to get the the filename from the url without any params
-        parsed_uri = urlparse(url)
+        parsed_uri = urlparse(favicon_url)
         favicon_filepath = parsed_uri.path
         favicon_path, favicon_filename  = os.path.split(favicon_filepath)
 
@@ -157,26 +168,25 @@ def get_favicon_url(url):
 
     # Get the markup
     try:
-        response = requests.get(url)
+        response = requests.get(url, headers=headers)
     except:
         raise Exception("Unable to find URL. Is it valid? %s" % url)
     
     if response.status_code == requests.codes.ok:
         favicon_url = parse_markup_for_favicon(response.content, url)
-        
+
         # We found a favicon in our markup. Return the URL
         if favicon_url:
             return favicon_url
             
-    else:
-        # The favicon doesn't appear to be in the makrup
-        # Let's look at the common locaiton, url/favicon.ico
-        favicon_url = '{uri.scheme}://{uri.netloc}/favicon.ico'.format(\
-            uri=parsed_site_uri)
-                            
-        response = requests.get(favicon_url)
-        if response.status_code == requests.codes.ok:
-            return favicon_url
+    # The favicon doesn't appear to be in the makrup
+    # Let's look at the common locaiton, url/favicon.ico
+    favicon_url = '{uri.scheme}://{uri.netloc}/favicon.ico'.format(\
+        uri=parsed_site_uri)
+                        
+    response = requests.get(favicon_url, headers=headers)
+    if response.status_code == requests.codes.ok:
+        return favicon_url
 
     # No favicon in the markup or at url/favicon.ico
     return None
